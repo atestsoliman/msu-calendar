@@ -1,0 +1,47 @@
+<link rel="import" href="node_modules/@polymer/polymer/polymer.html" />
+
+<dom-module id="msu-calendar">
+    <template>
+        <style>
+            :host {
+                display:block;
+            }
+        </style>
+
+        <!-- local DOM for your element -->
+
+        <div>Calendar Event [[event]]</div> <!-- data bindings in local DOM -->
+        <div>[[eventInfo.title.$t]]</div>
+    </template>
+
+    <script>
+    // element registration
+    Polymer({
+        is: "msu-calendar",
+
+      // add properties and methods on the element's prototype
+
+      properties: {
+        // declare properties for the element's public API
+          event: Number,
+          eventInfo: {
+              type: Object,
+              value: function () { return { title: { $t: '' } }; }
+          }
+      },
+      attached: function() {
+          //http://missouristate.info/feeds/calendar.aspx?eventid=91263&alt=json
+          var self = this;
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", "http://missouristate.info/feeds/calendar.aspx?eventid=" + this.event + "&alt=json", true);
+          xhr.onload = function (evt) {
+              console.log(JSON.parse(this.responseText).feed.entry[0].title.$t);
+              self.set('eventInfo', JSON.parse(this.responseText).feed.entry[0]);
+          };
+          xhr.send();
+      }
+
+    });
+    </script>
+
+</dom-module>

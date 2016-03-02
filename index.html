@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Web Component Example</title>
+    <script>
+        window.Polymer = window.Polymer || {};
+        window.Polymer.dom = 'shadow';
+    </script>
+    <style>
+        body {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+        }
+        div {
+            background-color: pink;
+        }
+    </style>
+    <link rel="import" href="msu-calendar.html" />
+</head>
+<body>
+    <msu-calendar event="91263"></msu-calendar>
+</body>
+</html>

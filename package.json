@@ -1,0 +1,16 @@
+{
+  "name": "calendar-component",
+  "version": "1.0.0",
+  "description": "Web Component for MSU Calendar Events",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chad Killingsworth",
+  "license": "UNLICENSED",
+  "dependencies": {
+	"connect": "^3.4.0",
+    "@polymer/polymer": "^1.2.5-npm-test.2",
+	"serve-static": "^1.10.2"
+  }
+}
