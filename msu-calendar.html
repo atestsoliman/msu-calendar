@@ -6,12 +6,29 @@
             :host {
                 display:block;
             }
+
+            h1 {
+                font-size: 16px;
+                line-height: 19px;
+                margin: 0;
+            }
+            .meta {
+                margin-bottom: 15px;
+                font-size: 12px;
+                color: #808080;
+            }
+
+            a {
+                color: currentColor;
+            }
         </style>
 
         <!-- local DOM for your element -->
 
-        <div>Calendar Event [[event]]</div> <!-- data bindings in local DOM -->
-        <div>[[eventInfo.title.$t]]</div>
+        <h1>[[eventInfo.title.$t]]</h1>
+        <div class="meta">[[formatStartTime(eventInfo)]]</div>
+        <p>[[eventInfo.summary.$t]]</p>
+        <p><a href="[[getMoreInfoLink(eventInfo.link)]]">Full event details</a></p>
     </template>
 
     <script>
@@ -20,14 +37,13 @@
         is: "msu-calendar",
 
       // add properties and methods on the element's prototype
-
       properties: {
         // declare properties for the element's public API
-          event: Number,
-          eventInfo: {
-              type: Object,
-              value: function () { return { title: { $t: '' } }; }
-          }
+        event: Number,
+        eventInfo: {
+            type: Object,
+            value: function () { return { title: { $t: '' } }; }
+        }
       },
       attached: function() {
           //http://missouristate.info/feeds/calendar.aspx?eventid=91263&alt=json
@@ -35,13 +51,31 @@
           var xhr = new XMLHttpRequest();
           xhr.open("GET", "http://missouristate.info/feeds/calendar.aspx?eventid=" + this.event + "&alt=json", true);
           xhr.onload = function (evt) {
-              console.log(JSON.parse(this.responseText).feed.entry[0].title.$t);
-              self.set('eventInfo', JSON.parse(this.responseText).feed.entry[0]);
+              self.eventInfo = JSON.parse(this.responseText).feed.entry[0];
+              console.log(self.eventInfo);
           };
           xhr.send();
-      }
+      },
+      formatStartTime: function (eventInfo) {
+          if (!eventInfo.gd$when) {
+              return '';
+          }
+          var startTime = new Date(eventInfo.gd$when[0].startTime);
+          return startTime.toDateString();
+      },
+      getMoreInfoLink: function (links) {
+          if (!links || links.length < 1) {
+              return '#';
+          }
 
+          for (var i = 0; i < links.length; i++) {
+              if (links[i].rel === 'alternate' && links[i].type === 'text/html') {
+                  return links[i].href;
+              }
+          }
+
+          return '#';
+      }
     });
     </script>
-
 </dom-module>
