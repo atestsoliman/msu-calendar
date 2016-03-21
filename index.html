@@ -1,21 +1,69 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <title>Web Component Example</title>
-    <script>
-        window.Polymer = window.Polymer || {};
-        window.Polymer.dom = 'shadow';
-    </script>
-    <style>
-        body {
-            font-family: Verdana, Arial, Helvetica, sans-serif;
+  <meta charset="utf-8" />
+  <title>Web Component Example</title>
+  <script>
+    window.Polymer = window.Polymer || {};
+    window.Polymer.dom = 'shadow';
+  </script>
+  <style>
+    body {
+      font-family: Verdana, Arial, Helvetica, sans-serif;
+    }
+  </style>
+  <script>
+    (function () {
+      function changeEventId(newId) {
+        document.getElementsByTagName('msu-calendar')[0].setAttribute('event', newId);
+      }
+
+      let currentBase = location.protocol + '//' + location.host;
+      let isHandledUrlExpr = /^\/(\d+)$/;
+      document.addEventListener('click', function (evt) {
+        console.log(evt);
+        let targetAnchor;
+        if (evt.target.tagName === 'A') {
+          targetAnchor = evt.target;
+        } else if (evt.path && evt.path.length > 0) {
+          for (let i = 0; i < evt.path.length; i++) {
+            if (evt.path[i].tagName === 'A') {
+              targetAnchor = evt.path[i];
+              break;
+            }
+          }
         }
 
-    </style>
-    <link rel="import" href="msu-calendar.html" />
+        if (targetAnchor && targetAnchor.href.indexOf(currentBase) === 0 &&
+          isHandledUrlExpr.test(targetAnchor.pathname)) {
+          evt.preventDefault();
+
+          let parts = isHandledUrlExpr.exec(targetAnchor.pathname);
+
+          history.pushState({ id: parts[1] }, null, targetAnchor.href);
+          changeEventId(parts[1]);
+        }
+        //evt.preventDefault();
+      }, false);
+
+      window.addEventListener('popstate', function (evt) {
+        if (evt.state && evt.state.id) {
+          changeEventId(evt.state.id);
+        }
+      }, false);
+    })();
+  </script>
+  <link rel="import" href="msu-calendar.html" />
 </head>
 <body>
-    <msu-calendar event="91263"></msu-calendar>
+  <msu-calendar event="91263"></msu-calendar>
+  <br />
+  <h2>Other events</h2>
+  <ul>
+    <li><a href="/91263">MSU Hall of Fame Night</a></li>
+    <li><a href="/83407">Spring Holiday</a></li>
+    <li><a href="/81092">Study Day</a></li>
+    <li><a href="/81093">Finals Week</a></li>
+  </ul>
 </body>
 </html>
