@@ -9,8 +9,9 @@
   "author": "Chad Killingsworth",
   "license": "UNLICENSED",
   "dependencies": {
-	"connect": "^3.4.0",
     "@polymer/polymer": "^1.2.5-npm-test.2",
-	"serve-static": "^1.10.2"
+    "connect": "^3.4.0",
+    "page": "github:visionmedia/page.js",
+    "serve-static": "^1.10.2"
   }
 }

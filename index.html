@@ -7,6 +7,7 @@
     window.Polymer = window.Polymer || {};
     window.Polymer.dom = 'shadow';
   </script>
+  <script src="node_modules/page/page.js"></script>
   <style>
     body {
       font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -14,43 +15,20 @@
   </style>
   <script>
     (function () {
+      page('/:event', function (context, next) {
+        context.handled = true;
+
+        console.log(context);
+        changeEventId(context.params.event);
+
+        next();
+      });
+
       function changeEventId(newId) {
         document.getElementsByTagName('msu-calendar')[0].setAttribute('event', newId);
       }
 
-      let currentBase = location.protocol + '//' + location.host;
-      let isHandledUrlExpr = /^\/(\d+)$/;
-      document.addEventListener('click', function (evt) {
-        console.log(evt);
-        let targetAnchor;
-        if (evt.target.tagName === 'A') {
-          targetAnchor = evt.target;
-        } else if (evt.path && evt.path.length > 0) {
-          for (let i = 0; i < evt.path.length; i++) {
-            if (evt.path[i].tagName === 'A') {
-              targetAnchor = evt.path[i];
-              break;
-            }
-          }
-        }
-
-        if (targetAnchor && targetAnchor.href.indexOf(currentBase) === 0 &&
-          isHandledUrlExpr.test(targetAnchor.pathname)) {
-          evt.preventDefault();
-
-          let parts = isHandledUrlExpr.exec(targetAnchor.pathname);
-
-          history.pushState({ id: parts[1] }, null, targetAnchor.href);
-          changeEventId(parts[1]);
-        }
-        //evt.preventDefault();
-      }, false);
-
-      window.addEventListener('popstate', function (evt) {
-        if (evt.state && evt.state.id) {
-          changeEventId(evt.state.id);
-        }
-      }, false);
+      page.start();
     })();
   </script>
   <link rel="import" href="msu-calendar.html" />
