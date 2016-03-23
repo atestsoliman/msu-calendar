@@ -103,7 +103,7 @@
       <p><a href="[[getMoreInfoLink(eventInfo.link)]]">Full event details</a></p>
     </template>
   </template>
-
+  <script src="xhrpromise.js"></script>
   <script>
     // element registration
     Polymer({
@@ -136,15 +136,22 @@
 
       loadEventDetails_: function () {
         //http://missouristate.info/feeds/calendar.aspx?eventid=91263&alt=json
-        var self = this;
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "http://missouristate.info/feeds/calendar.aspx?eventid=" + this.event + "&alt=json", true);
-        xhr.onload = function (evt) {
-          self.eventInfo = JSON.parse(this.responseText).feed.entry[0];
-          self.loading_ = false;
-          console.log(self.eventInfo);
-        };
-        xhr.send();
+
+        getRemote("http://missouristate.info/feeds/calendar.aspx?alt=json&eventid=" + this.event)
+          .then((function (data) {
+            
+            console.log(this.eventInfo);
+
+            return getRemote("http://missouristate.info/feeds/calendar.aspx?recurrences=none&alt=json&eventid=" + this.event);
+          }).bind(this))
+          .then((function (data) {
+            this.eventInfo = data.feed.entry[0];
+            this.loading_ = false;
+            console.log(data);
+          }).bind(this))
+          .catch(function (err) {
+            throw err;
+          });
       },
 
       formatStartTime: function (eventInfo) {
