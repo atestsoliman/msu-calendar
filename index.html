@@ -13,24 +13,6 @@
       font-family: Verdana, Arial, Helvetica, sans-serif;
     }
   </style>
-  <script>
-    (function () {
-      page('/:event', function (context, next) {
-        context.handled = true;
-
-        console.log(context);
-        changeEventId(context.params.event);
-
-        next();
-      });
-
-      function changeEventId(newId) {
-        document.getElementsByTagName('msu-calendar')[0].setAttribute('event', newId);
-      }
-
-      page.start();
-    })();
-  </script>
   <link rel="import" href="msu-calendar.html" />
 </head>
 <body>
@@ -43,5 +25,23 @@
     <li><a href="/81092">Study Day</a></li>
     <li><a href="/81093">Finals Week</a></li>
   </ul>
+  <script>
+  (function () {
+    page('/:event', function (context, next) {
+      context.handled = true;
+
+      console.log(context);
+      changeEventId(context.params.event);
+
+      next();
+    });
+
+    function changeEventId(newId) {
+      document.getElementsByTagName('msu-calendar')[0].setAttribute('event', newId);
+    }
+
+    page.start();
+  })();
+  </script>
 </body>
 </html>
