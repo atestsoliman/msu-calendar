@@ -7,14 +7,14 @@ var url = require('url');
 
 var app = connect();
 
-var serve = serveStatic('./');
-app.use(serve);
+app.use(serveStatic('./dist'));
+app.use(serveStatic('./'));
 
 // Map all the expected SPA urls to the root index.html
 app.use(function (req, res, next) {
   var reqUri = url.parse(req.url);
   if (/^\/[0-9]+/.test(reqUri.pathname)) {
-    fs.readFile('./index.html', { encoding: 'utf8' }, function (err, data) {
+    fs.readFile('./dist/index.html', { encoding: 'utf8' }, function (err, data) {
       if (err) {
         throw err;
       }
