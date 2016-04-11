@@ -136,8 +136,29 @@
 
       loadEventDetails_: function () {
         //http://missouristate.info/feeds/calendar.aspx?eventid=91263&alt=json
+        //http://missouristate.info/feeds/calendar.aspx?alt=json&eventid=
 
-        getRemote("http://missouristate.info/feeds/calendar.aspx?alt=json&eventid=" + this.event)
+        var callbackName = "msuCalendarCallback" + Math.round((Math.random() * 100));
+        (function (name) {
+          window[name] = (function (data) {
+            console.log(data);
+            if (name !== callbackName || !data || !data.feed || !data.feed.entry || data.feed.entry.length < 1) {
+              return;
+            }
+            this.eventInfo = data.feed.entry[0];
+            this.loading_ = false;
+          }).bind(this);
+        }).call(this, callbackName);
+
+        var script = document.createElement('script');
+        script.src = 'http://missouristate.info/feeds/calendar.aspx?alt=json-in-script&callback=' + callbackName  + '&eventid=' + this.event;
+        var scripts = document.getElementsByTagName('script');
+        scripts[0].parentNode.insertBefore(script, scripts[0]);
+        script.onload = function () {
+          this.parentElement.removeChild(this);
+        };
+
+        /*getRemote("http://missouristate.info/feeds/calendar.aspx?alt=json&eventid=" + this.event)
           .then((function (data) {
             
             console.log(this.eventInfo);
@@ -151,7 +172,7 @@
           }).bind(this))
           .catch(function (err) {
             throw err;
-          });
+          });*/
       },
 
       formatStartTime: function (eventInfo) {
